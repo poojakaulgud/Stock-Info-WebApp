@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <LINK href="style.css" rel="stylesheet" type="text/css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://code.highcharts.com/stock/highstock.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>         
+    <title>assgn2</title>
+</head>
+<body>
+    <h2 style="font-weight: normal;">Stock Search</h2>
+    
+    <div>
+        <form class="searchBar" id="searchForm" onSubmit="getSTS();return false">
+            <label><button style="all:unset;">
+                <svg aria-hidden="true" fill="#ddd" class="searchIcon" focusable="true" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg>
+            </button></label>
+            <input type="text" name='sts' id="sts" placeholder="Enter Stock Ticker Symbol" required/>
+            <!-- <label><button style="display:none;"> -->
+                <svg aria-hidden="true" fill="#ddd" onclick="clearFunc()" class="clearIcon" focusable="true" data-prefix="fas" data-icon="times" class="svg-inline--fa fa-times fa-w-11" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path  d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+            <!-- </button></label> -->
+        </form>
+    </div>
+
+    <script src="main.js"></script>
+
+
+    <div class="errorBlock">
+        <p>Error: No record has been found, please enter a valid symbol.</p>
+    </div>
+
+    <div id="newContent">
+        <br>
+        <div id="navBar">
+            <ul>
+                <li onclick="showCompanyData()"><a id="company">Company</a></li>
+                <li onClick="showStockSummary()"><a id="stockSummary">Stock Summary</a></li>
+                <li onClick="showCharts()"><a id="charts">Charts</a></li>
+                <li onClick="showNews()"><a id="news">Latest News</a></li>
+              </ul>
+        </div>
+        <br><br>
+        <div id="mainContent">
+
+            <div class="Company" style="display: none;">                
+                <table style="text-align:center">
+                    <tr>
+                        <td colspan="2"><img id="cLogo" src='' alt="Company Logo" style="height: 100px; width: 100px"></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="leftCol"><b>Company Name</b></td>
+                        <td class="rightCol" id="cName"></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="leftCol"><b>Stock Ticker Symbol</b></td>
+                        <td class="rightCol" id="cTicker"></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="leftCol"><b>Stock Exchange Code</b></td>
+                        <td class="rightCol" id="cExchange"></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="leftCol"><b>Company Start Date</b></td>
+                        <td class="rightCol" id="cDate"></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="leftCol"><b>Category</b></td>
+                        <td class="rightCol" id="cCategory"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="StockSummary" style="display: none;">
+                <table style="text-align:center">
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><b>Stock Ticker Symbol</b></p></td>
+                        <td class="right2Col"><p id="sTicker"></p></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><b>Trading Day</b></p></td>
+                        <td class="right2Col"><p id="sTradingDay"></p></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><b>Previous Closing Price</b></p></td>
+                        <td class="right2Col"><p id="sCP"></p></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><b>Opening Price</b></p></td>
+                        <td class="right2Col"><p id="sOP"></p></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><b>High Price</b></p></td>
+                        <td class="right2Col"><p id="sHP"></p></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><b>Low Price</b></p></td>
+                        <td class="right2Col"><p id="sLP"></p></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><span><b>Change</b></span></p></td>
+                        <td class="right2Col"><p style="display:inline;"><span id="sChange"></span>&nbsp;<img id="changeImg" style="height: 10px; width: 10px" src="" alt=""></p></td>
+                    </tr>
+                    <tr class="needsBorder">
+                        <td class="left2Col"><p><span><b>Change Percent</b></span></p></td>
+                        <td class="right2Col"><p style="display:inline;"><span id="sChangePercent"></span>&nbsp;<img id="changePercentImg" style="height: 10px; width: 10px" src="" alt=""></p></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="flexContainer">
+                                <div class="words1"><p>Strong Sell</p></div>
+                                <div><p id="strongSell"></p></div>
+                                <div><p id="sell"></p></div>
+                                <div><p id="hold"></p></div>
+                                <div><p id="buy"></p></div>
+                                <div><p id="strongBuy"></p></div>
+                                <div class="words2"><p>Strong Buy</p></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            Recommendation Trends
+                        </td>
+                    </tr>
+                </table>
+                
+            </div>
+
+            <div class="Charts" style="display: none; width:100%;">
+                <div id="stockPriceChart">
+                </div>
+            </div>
+
+            <div class="News" style="display: none;">
+                <div class="article">
+                    <div class="newsImgContainer">
+                        <img id="newsImg1" src="" alt="">
+                    </div>
+                    <div class="newsTextContainer">
+                        <h4 id="newsHeading1"></h4>
+                        <p id="newsDate1"></p>
+                        <a id="newsLink1" href="" target="_blank">See Original Post</a>
+                    </div>
+                </div>                              
+                <br><br>
+                <div class="article">
+                    <div class="newsImgContainer">
+                        <img id="newsImg2" src="" alt="">
+                    </div>
+                    <div class="newsTextContainer">
+                        <h4 id="newsHeading2"></h4>
+                        <p id="newsDate2"></p>
+                        <a id="newsLink2" href="" target="_blank">See Original Post</a>
+                    </div>
+                </div>
+                <br><br>
+                <div class="article">
+                    <div class="newsImgContainer">
+                        <img id="newsImg3" src="" alt="">
+                    </div>
+                    <div class="newsTextContainer">
+                        <h4 id="newsHeading3"></h4>
+                        <p id="newsDate3"></p>
+                        <a id="newsLink3" href="" target="_blank">See Original Post</a>
+                    </div>
+                </div>
+                <br><br>
+                <div class="article">
+                    <div class="newsImgContainer">
+                        <img id="newsImg4" src="" alt="">
+                    </div>
+                    <div class="newsTextContainer">
+                        <h4 id="newsHeading4"></h4>
+                        <p id="newsDate4"></p>
+                        <a id="newsLink4" href="" target="_blank">See Original Post</a>
+                    </div>
+                </div>
+                <br><br>
+                <div class="article">
+                    <div class="newsImgContainer">
+                        <img id="newsImg5" src="" alt="">
+                    </div>
+                    <div class="newsTextContainer">
+                        <h4 id="newsHeading5"></h4>
+                        <p id="newsDate5"></p>
+                        <a id="newsLink5" href="" target="_blank">See Original Post</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <br><br><br>
+      
+</body>
+</html>
